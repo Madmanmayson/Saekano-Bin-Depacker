@@ -23,11 +23,25 @@ namespace Saekano_Depack
 #if DEBUG
             string path = Console.ReadLine();
             byte[] datFile = File.ReadAllBytes(path);
+            FileInfo file = new FileInfo(path);
 #else
+            if (args.Length == 0)
+            {
+                Console.WriteLine("To run this program drag the .dat file onto the exe in order to run it.");
+                Console.WriteLine("Alternatively you can run it from a cmd window and specify the .dat file as the first arguement from there");
+                Console.Read();
+                return;
+            }
             byte[] datFile = File.ReadAllBytes(args[0]);
+            FileInfo file = new FileInfo(args[0]);
 #endif
 
-            ExtractFile(datFile);
+            string directory = file.Name;
+            ExtractFile(datFile, directory.Remove(directory.LastIndexOf(".")) + "\\");
+
+            Console.WriteLine();
+            Console.WriteLine("Depack Complete. Press enter/return to exit");
+            Console.Read();
         }
 
         private static void ExtractFile(byte[] dataFile, string directory = "Output\\")
@@ -91,6 +105,7 @@ namespace Saekano_Depack
                     }
                     else
                     {
+                        Console.WriteLine("Size:{0}  Path:{1}", subBinFile.Length, directory + fileName);
                         File.WriteAllBytes(directory + fileName, subBinFile);
                     }
                 }
@@ -114,6 +129,7 @@ namespace Saekano_Depack
                     }
                     else
                     {
+                        Console.WriteLine("Size:{0}  Path:{1}", output.Length, fileName);
                         File.WriteAllBytes(fileName, output);
                     }
                 }
@@ -121,6 +137,7 @@ namespace Saekano_Depack
                 catch
                 {
                     Console.WriteLine("ERROR DECOMPRESSING, FILE MIGHT NOT BE COMPRESSED?");
+                    Console.WriteLine("Size:{0}  Path:{1}", data.Length, fileName);
                     File.WriteAllBytes(fileName, data);
                 }
             }
